@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lx.dao.UserMapper">
+    <select id="getUsers" resultType="com.lx.entity.User">
+    select name from user
+    </select>
+    <select id="getUsersDetail" resultType="com.lx.entity.UserDetail">
+        select * from users_detail
+    </select>
+    <select id="getUserDetail" resultType="com.lx.entity.UserDetail">
+        select user.id AS id , user.name AS name ,user.age AS age,user.birthday AS birthday,account.balance AS balance from(user join account) where user.id=#{id} and ( user.id = account.u_id )
+    </select>
+    <select id="searchByname" resultType="com.lx.entity.UserDetail">
+        select user.id AS id , user.name AS name ,user.age AS age,user.birthday AS birthday,account.balance AS balance from(user join account) where user.name like CONCAT('%',#{0},'%')  and ( user.id = account.u_id )
+    </select>
+    <insert id="insertUser" parameterType="com.lx.entity.User" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into user(name,age,birthday) values (#{name},#{age},#{birthday})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <delete id="deleteUser">
+        delete from user where id=#{id}
+    </delete>
+
+    <update id="updateUser" parameterType="com.lx.entity.UserDetail">
+        update user set name=#{name},age=#{age},birthday=#{birthday} where id=#{id}
+    </update>
+</mapper>
